@@ -4,18 +4,31 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Form\ArticleSearchType;
+use App\Form\CategoryType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BlogController extends AbstractController
 {
-
     /**
      * @Route("/blog", name="blog_index")
      */
-    public function index()
+    public function index(Request $request)
     {
+        $form = $this->createForm(
+            ArticleSearchType::class,
+            null,
+            ['method' => Request::METHOD_GET]
+        );
+        $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            $data = $form->getData();
+        }
+
         $articles = $this->getDoctrine()
             ->getRepository(Article::class)
             ->findAll();
@@ -27,10 +40,38 @@ class BlogController extends AbstractController
         }
 
         return $this->render(
-            'blog/index.html.twig',
-            ['articles' => $articles]
+            'blog/index.html.twig', [
+                'articles' => $articles,
+                'form' => $form->createView()
+            ]
         );
     }
+
+    /**
+     * @Route("/category", name="category_showAll")
+     */
+    public function createCategory(Request $request, EntityManagerInterface $manager)
+    {
+        $categories = $manager->getRepository(Category::class)->findAll();
+
+        $category = new Category();
+        $form = $this->createForm(CategoryType::class, $category);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $manager->persist($category);
+            $manager->flush();
+
+            return $this->redirectToRoute('category_showAll');
+        }
+
+        return $this->render('category/categories.html.twig', [
+            'categories' => $categories,
+            'form' => $form->createView(),
+            'category' => $category
+        ]);
+    }
+
 
     /**
      * Getting a article with a formatted slug for title
@@ -40,7 +81,7 @@ class BlogController extends AbstractController
      * @Route("/blog/{slug<^[a-z0-9-]+$>}",
      *     defaults={"slug" = null},
      *     name="blog_show")
-     *  @return Response A response instance
+     * @return Response A response instance
      */
     public function show(string $slug): Response
     {
@@ -73,7 +114,6 @@ class BlogController extends AbstractController
         );
     }
 
-
     /**
      * @param string $category
      * @return Response
@@ -88,9 +128,8 @@ class BlogController extends AbstractController
         $articles = $this->getDoctrine()
             ->getRepository(Article::class)
             ->findBy(['category' => $category], ['id' => "DESC"], 3);
-        dump($articles);
 
-        if($category) {
+        if ($category) {
             return $this->render("blog/category.html.twig", [
                 'category' => $category,
                 'articles' => $articles

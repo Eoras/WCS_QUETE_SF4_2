@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Category{% endblock %}
+
+{% block stylesheets %}{% endblock %}
+
+{% block body %}
+
+    <ul>
+        List of categories
+        {% for category in categories %}
+            <li><a href="{{ path('blog_show_category', {"category" : category.name }) }}">{{ category.name }}</a></li>
+        {% endfor %}
+    </ul>
+
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('blog_index') }}">
+        Back to homepage.
+    </a>
+
+{% endblock %}
