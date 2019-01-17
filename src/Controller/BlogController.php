@@ -25,6 +25,7 @@ class BlogController extends AbstractController
             null,
             ['method' => Request::METHOD_GET]
         );
+
         $form->handleRequest($request);
         if ($form->isSubmitted()) {
             $data = $form->getData();
@@ -34,54 +35,35 @@ class BlogController extends AbstractController
         $formNew = $this->createForm(ArticleType::class, $article);
         $formNew->handleRequest($request);
 
-        if($formNew->isSubmitted() && $formNew->isValid()) {
+        if ($formNew->isSubmitted() && $formNew->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
             $em->flush();
+
+            return $this->redirectToRoute('blog_index');
         }
 
         $articles = $this->getDoctrine()
             ->getRepository(Article::class)
             ->findAll();
 
-        if (!$articles) {
+        $categories = $this->getDoctrine()
+            ->getRepository(Category::class)
+            ->findAll();
+
+        if (!$categories) {
             throw $this->createNotFoundException(
-                'No article found in article\'s table.'
+                'No category found in category\'s table. Go to /category route to add one.'
             );
         }
 
         return $this->render(
-            'blog/index.html.twig', [
+            'blog/showAll.html.twig', [
                 'articles' => $articles,
                 'form' => $form->createView(),
                 'formNew' => $formNew->createView()
             ]
         );
-    }
-
-    /**
-     * @Route("/category", name="category_showAll")
-     */
-    public function createCategory(Request $request, EntityManagerInterface $manager)
-    {
-        $categories = $manager->getRepository(Category::class)->findAll();
-
-        $category = new Category();
-        $form = $this->createForm(CategoryType::class, $category);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-            $manager->persist($category);
-            $manager->flush();
-
-            return $this->redirectToRoute('category_showAll');
-        }
-
-        return $this->render('category/categories.html.twig', [
-            'categories' => $categories,
-            'form' => $form->createView(),
-            'category' => $category
-        ]);
     }
 
 
@@ -118,39 +100,12 @@ class BlogController extends AbstractController
         }
 
         return $this->render(
-            'blog/show.html.twig',
+            'blog/showOne.html.twig',
             [
                 'article' => $article,
                 'slug' => $slug,
             ]
         );
     }
-
-    /**
-     * @param string $category
-     * @return Response
-     * @Route("/blog/category/{category}", name="blog_show_category")
-     */
-    public function showByCategory(string $category)
-    {
-        $category = $this->getDoctrine()
-            ->getRepository(Category::class)
-            ->findOneBy(["name" => $category]);
-
-        $articles = $this->getDoctrine()
-            ->getRepository(Article::class)
-            ->findBy(['category' => $category], ['id' => "DESC"], 3);
-
-        if ($category) {
-            return $this->render("blog/category.html.twig", [
-                'category' => $category,
-                'articles' => $articles
-            ]);
-        }
-
-        return $this->redirectToRoute('blog_index');
-
-    }
-
 
 }

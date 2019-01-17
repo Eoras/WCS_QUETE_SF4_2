@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article : {{ slug }}{% endblock %}
+
+{% block stylesheets %}{% endblock %}
+
+{% block body %}
+    <div>
+        <h1>Article : {{ article.title }}</h1>
+        <h4>
+            Category : {{ article.category.name }}<br>
+            <small>
+                {% if article.tags %}
+                    Tag{{ article.tags|length > 1 ? "s" }}:
+                    {% for tag in article.tags %}
+                        <a href="{{ path('tag_showOne', {'name': tag.name}) }}">{{ tag.name }}</a>
+                    {% endfor %}
+                {% else %}
+                    Aucun tag
+                {% endif %}
+            </small>
+        </h4>
+        {{ article.content }}
+    </div>
+{% endblock %}

@@ -5,21 +5,16 @@
 {% block stylesheets %}{% endblock %}
 
 {% block body %}
-
+<h1>List of categories</h1>
     <ul>
-        List of categories
+
         {% for category in categories %}
-            <li><a href="{{ path('blog_show_category', {"category" : category.name }) }}">{{ category.name }}</a></li>
+            <li><a href="{{ path('category_showAllArticles', {"name" : category.name }) }}">{{ category.name }}</a></li>
         {% endfor %}
     </ul>
 
     {{ form_start(form) }}
     {{ form_row(form.name) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <button class="btn">{{ button_label|default('Add') }}</button>
     {{ form_end(form) }}
-
-    <a href="{{ path('blog_index') }}">
-        Back to homepage.
-    </a>
-
 {% endblock %}

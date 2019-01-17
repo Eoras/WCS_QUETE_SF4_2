@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Index{% endblock %}
+
+{% block stylesheets %}{% endblock %}
+
+{% block body %}
+    {{ form_start(form) }}
+    {{ form_widget(form.searchField) }}
+    <button type="submit" name="btnSearch">Rechercher</button>
+    {{ form_end(form) }}
+
+    {% if articles %}
+        <h1>All articles from article's table :</h1>
+        {% for article in articles %}
+            <div>
+                <h2 style="margin-bottom: 0; padding-bottom: 0;">
+                    {{ loop.index }} / <a href="{{ path('article_showOne', {'id': article.id}) }}">{{ article.title }}</a><br>
+                </h2>
+                <small><u>Category</u> : <a
+                            href="{{ path('category_showAllArticles', {'name': article.category.name }) }}">{{ article.category.name }}</a>
+                    {% if article.tags|length >= 1 %}
+                        -
+                        <b>Tags:</b>
+                        {% for tag in article.tags %}
+                            <a href="{{ path('tag_showOne', {'name': tag.name }) }}">{{ tag.name }}</a>{{ loop|last ? "" : ", " }}
+                        {% endfor %}
+                    {% endif %}
+                </small>
+                <p style="margin-top: 0;">{{ article.content }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h1>No article in the database</h1>
+    {% endif %}
+
+    <hr>
+    <h2 style="margin: 0;">Add new article</h2>
+    {{ form_start(formNew) }}
+    {{ form_row(formNew) }}
+    <button type="submit" name="btnSearch">Ajouter</button>
+    {{ form_end(formNew) }}
+{% endblock %}

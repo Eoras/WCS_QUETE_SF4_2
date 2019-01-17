@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article {{ article.title }}{% endblock %}
+
+{% block body %}
+    <h1 style="margin-bottom: 0;">{{ article.title }}</h1>
+    <small>
+        <b>Category:</b> {{ article.category.name }}
+        {% if article.tags|length >= 1 %}
+            -
+            <b>Tags:</b>
+            {% for tag in article.tags %}
+                <a href="{{ path('tag_showOne', {'name': tag.name }) }}">{{ tag.name }}</a>{{ loop|last ? "" : ", " }}
+            {% endfor %}
+        {% endif %}
+    </small>
+    <p>{{ article.content }}</p>
+
+{% endblock %}
