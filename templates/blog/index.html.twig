@@ -26,4 +26,11 @@
     <a href="{{ path('blog_show', { 'slug': "javascript-vs-php" }) }}">
         Testing show() method from BlogController with a real article s slug.
     </a>
+
+    <hr>
+    {{ form_start(formNew) }}
+    {{ form_row(formNew) }}
+    <button type="submit" name="btnSearch">Ajouter</button>
+    {{ form_end(formNew) }}
+    <hr>
 {% endblock %}

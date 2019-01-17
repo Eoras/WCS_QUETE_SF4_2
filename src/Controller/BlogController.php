@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Entity\Category;
 use App\Form\ArticleSearchType;
+use App\Form\ArticleType;
 use App\Form\CategoryType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,6 +30,16 @@ class BlogController extends AbstractController
             $data = $form->getData();
         }
 
+        $article = new Article();
+        $formNew = $this->createForm(ArticleType::class, $article);
+        $formNew->handleRequest($request);
+
+        if($formNew->isSubmitted() && $formNew->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($article);
+            $em->flush();
+        }
+
         $articles = $this->getDoctrine()
             ->getRepository(Article::class)
             ->findAll();
@@ -42,7 +53,8 @@ class BlogController extends AbstractController
         return $this->render(
             'blog/index.html.twig', [
                 'articles' => $articles,
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'formNew' => $formNew->createView()
             ]
         );
     }
