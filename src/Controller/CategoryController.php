@@ -41,11 +41,12 @@ class CategoryController extends AbstractController
     }
 
     /**
+     * @Route("/{id<\d+>}", name="showOneById")
      * @Route("/{name}", name="showAllArticles")
+     *
      */
     public function showOne(Category $category)
     {
-
         return $this->render('category/showOne.twig', [
             'category' => $category
         ]);
