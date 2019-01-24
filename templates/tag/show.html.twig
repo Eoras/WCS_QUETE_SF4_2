@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} - Tag {{ tag.name }}{% endblock %}
+
+{% block body %}
+    <h1 style="margin-bottom: 0">Tag: {{ tag.name }}</h1>
+    <a href="{{ path('tag_index') }}">back to list</a> --
+    <a href="{{ path('tag_edit', {'id': tag.id}) }}">edit</a> --
+    {{ include('tag/_delete_form.html.twig') }}
+
+    <ul>
+        <li>id: {{ tag.id }}</li>
+        <li>Article{{ tag.articles|length > 1 ? "s" : "" }}</li>
+        {% if tag.articles|length > 0 %}
+            <ul>
+                {% for article in tag.articles %}
+                    <li>{{ article.title }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <i><small>Not used</small></i>
+        {% endif %}
+    </ul>
+
+
+{% endblock %}

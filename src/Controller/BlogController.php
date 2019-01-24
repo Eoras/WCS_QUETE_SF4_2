@@ -6,8 +6,6 @@ use App\Entity\Article;
 use App\Entity\Category;
 use App\Form\ArticleSearchType;
 use App\Form\ArticleType;
-use App\Form\CategoryType;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,22 +18,19 @@ class BlogController extends AbstractController
      */
     public function index(Request $request)
     {
-        $form = $this->createForm(
-            ArticleSearchType::class,
-            null,
-            ['method' => Request::METHOD_GET]
-        );
+        $searchForm = $this->createForm(ArticleSearchType::class);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted()) {
-            $data = $form->getData();
+        $searchForm->handleRequest($request);
+        if ($searchForm->isSubmitted()) {
+            $data = $searchForm->getData();
+            echo "La recherche sera bientôt disponible ;)<br>";
         }
 
         $article = new Article();
-        $formNew = $this->createForm(ArticleType::class, $article);
-        $formNew->handleRequest($request);
+        $formNewArticle = $this->createForm(ArticleType::class, $article);
+        $formNewArticle->handleRequest($request);
 
-        if ($formNew->isSubmitted() && $formNew->isValid()) {
+        if ($formNewArticle->isSubmitted() && $formNewArticle->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
             $em->flush();
@@ -47,10 +42,10 @@ class BlogController extends AbstractController
             ->getRepository(Article::class)
             ->findAll();
 
-        $categories = $this->getDoctrine()
+        // Vérification si aucune catégorie:
+        $categories = count($this->getDoctrine()
             ->getRepository(Category::class)
-            ->findAll();
-
+            ->findAll());
         if (!$categories) {
             throw $this->createNotFoundException(
                 'No category found in category\'s table. Go to /category route to add one.'
@@ -60,8 +55,8 @@ class BlogController extends AbstractController
         return $this->render(
             'blog/showAll.html.twig', [
                 'articles' => $articles,
-                'form' => $form->createView(),
-                'formNew' => $formNew->createView()
+                'formSearch' => $searchForm->createView(),
+                'formNewArticle' => $formNewArticle->createView()
             ]
         );
     }

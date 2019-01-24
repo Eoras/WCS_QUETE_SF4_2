@@ -1,29 +1,36 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Index{% endblock %}
+{% block title %}- Blog{% endblock %}
 
 {% block stylesheets %}{% endblock %}
 
 {% block body %}
-    {{ form_start(form) }}
-    {{ form_widget(form.searchField) }}
-    <button type="submit" name="btnSearch">Rechercher</button>
-    {{ form_end(form) }}
+    {{ form_start(formSearch) }}
+    {{ form_widget(formSearch.search, {'attr' : {'style': 'width: 20%'} }) }}
+    <button type="submit">Rechercher</button>
+    {{ form_end(formSearch) }}
 
     {% if articles %}
-        <h1>All articles from article's table :</h1>
+        <h1>ARTICLES</h1>
+        <hr>
+        <h2 style="margin: 0;">Ajouter un article</h2>
+        {{ form_start(formNewArticle) }}
+        {{ form_widget(formNewArticle) }}
+        <button type="submit" name="btnSearch">Ajouter</button>
+        {{ form_end(formNewArticle) }}
+        <hr>
+        <h2 style="margin: 0;">Liste des articles</h2>
         {% for article in articles %}
             <div>
-                <h2 style="margin-bottom: 0; padding-bottom: 0;">
-                    {{ loop.index }} / <a href="{{ path('article_showOne', {'id': article.id}) }}">{{ article.title }}</a><br>
+                <h2 style="margin: 0; padding-bottom: 0;">
+                    {{ loop.index }}- <a href="{{ path('article_show', {'id': article.id}) }}">{{ article.title }}</a><br>
                 </h2>
-                <small><u>Category</u> : <a
-                            href="{{ path('category_showAllArticles', {'name': article.category.name }) }}">{{ article.category.name }}</a>
+                <small><b>Category:</b> <a href="{{ path('category_show', {'id': article.category.id }) }}">{{ article.category.name }}</a>
                     {% if article.tags|length >= 1 %}
                         -
                         <b>Tags:</b>
                         {% for tag in article.tags %}
-                            <a href="{{ path('tag_showOne', {'name': tag.name }) }}">{{ tag.name }}</a>{{ loop|last ? "" : ", " }}
+                            <a href="{{ path('tag_show', {'id': tag.id }) }}">{{ tag.name }}</a>{{ loop|last ? "" : ", " }}
                         {% endfor %}
                     {% endif %}
                 </small>
@@ -33,11 +40,4 @@
     {% else %}
         <h1>No article in the database</h1>
     {% endif %}
-
-    <hr>
-    <h2 style="margin: 0;">Add new article</h2>
-    {{ form_start(formNew) }}
-    {{ form_row(formNew) }}
-    <button type="submit" name="btnSearch">Ajouter</button>
-    {{ form_end(formNew) }}
 {% endblock %}

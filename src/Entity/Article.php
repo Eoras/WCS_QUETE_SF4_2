@@ -44,6 +44,11 @@ class Article
         $this->tags = new ArrayCollection();
     }
 
+    public function __toString()
+    {
+        return "(".$this->getId().")" . $this->getTitle();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
