@@ -6,6 +6,7 @@ use App\Entity\Article;
 use App\Entity\Category;
 use App\Form\ArticleSearchType;
 use App\Form\ArticleType;
+use App\Service\Slugify;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +17,7 @@ class BlogController extends AbstractController
     /**
      * @Route("/blog", name="blog_index")
      */
-    public function index(Request $request)
+    public function index(Request $request, Slugify $slugify)
     {
         $searchForm = $this->createForm(ArticleSearchType::class);
 
@@ -30,12 +31,13 @@ class BlogController extends AbstractController
         $formNewArticle = $this->createForm(ArticleType::class, $article);
         $formNewArticle->handleRequest($request);
 
-        if ($formNewArticle->isSubmitted() && $formNewArticle->isValid()) {
+        if ($formNewArticle->isSubmitted() && $formNewArticle->isValid())
+        {
+            $slug = $slugify->generate($article->getTitle());
+            $article->setSlug($slug);
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
             $em->flush();
-
-            return $this->redirectToRoute('blog_index');
         }
 
         $articles = $this->getDoctrine()

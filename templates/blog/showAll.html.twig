@@ -13,11 +13,7 @@
     {% if articles %}
         <h1>ARTICLES</h1>
         <hr>
-        <h2 style="margin: 0;">Ajouter un article</h2>
-        {{ form_start(formNewArticle) }}
-        {{ form_widget(formNewArticle) }}
-        <button type="submit" name="btnSearch">Ajouter</button>
-        {{ form_end(formNewArticle) }}
+        <a href="{{ path('article_new') }}" style="margin: 0;">Ajouter un article</a>
         <hr>
         <h2 style="margin: 0;">Liste des articles</h2>
         {% for article in articles %}

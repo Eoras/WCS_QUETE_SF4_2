@@ -4,6 +4,7 @@
 
 {% block body %}
     <h1 style="margin-bottom: 0;">{{ article.title }}</h1>
+    <h2 class="h6">{{ article.slug }}</h2>
     <small>
         <b>Category:</b> {{ article.category.name }}
         {% if article.tags|length >= 1 %}
@@ -15,5 +16,7 @@
         {% endif %}
     </small>
     <p>{{ article.content }}</p>
+
+    <a href="{{ path('article_edit', {'id': article.id}) }}">edit</a>
 
 {% endblock %}
