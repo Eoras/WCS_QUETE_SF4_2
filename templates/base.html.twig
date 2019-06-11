@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Symfony 4{% block title %}{% endblock %}</title>
-    {% block stylesheets %}{% endblock %}
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
 </head>
 <body>
-    <div>
-        <a href="{{ path('homepage') }}">HOME</a> --
-        <a href="{{ path('blog_index') }}">BLOG</a> --
-        <a href="{{ path('category_index') }}">CATEGORIES</a> --
-        <a href="{{ path('tag_index') }}">TAGS</a>
-    </div>
-    <hr>
 
-    {% block body %}{% endblock %}
-    {% block javascripts %}{% endblock %}
+    <header>
+        {{ include('navbar.html.twig') }}
+    </header>
+    <div class="container">
+        {% block body %}{% endblock %}
+    </div>
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+    {% endblock %}
 </body>
 </html>
