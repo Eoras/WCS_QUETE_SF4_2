@@ -3,28 +3,31 @@
 {% block title %}- Blog{% endblock %}
 
 {% block body %}
+
     {{ form_start(formSearch) }}
     {{ form_widget(formSearch.search, {'attr' : {'style': 'width: 20%'} }) }}
-    <button type="submit">Rechercher</button>
+    <button type="submit" class="btn btn-light border">Rechercher</button>
     {{ form_end(formSearch) }}
+
+    <a href="{{ path('article_new') }}" class="btn btn-light border float-right">Add new article</a>
 
     {% if articles %}
         <h1>ARTICLES</h1>
-        <hr>
-        <a href="{{ path('article_new') }}" style="margin: 0;">Ajouter un article</a>
-        <hr>
         <h2 style="margin: 0;">Liste des articles</h2>
         {% for article in articles %}
             <div>
                 <h2 style="margin: 0; padding-bottom: 0;">
-                    {{ loop.index }}- <a href="{{ path('article_show', {'id': article.id}) }}">{{ article.title }}</a><br>
+                    {{ loop.index }}- <a
+                            href="{{ path('article_show', {'id': article.id}) }}">{{ article.title }}</a><br>
                 </h2>
-                <small><b>Category:</b> <a href="{{ path('category_show', {'id': article.category.id }) }}">{{ article.category.name }}</a>
+                <small><b>Category:</b> <a
+                            href="{{ path('category_show', {'id': article.category.id }) }}">{{ article.category.name }}</a>
                     {% if article.tags|length >= 1 %}
                         -
                         <b>Tags:</b>
                         {% for tag in article.tags %}
-                            <a href="{{ path('tag_show', {'id': tag.id }) }}">{{ tag.name }}</a>{{ loop|last ? "" : ", " }}
+                            <a
+                            href="{{ path('tag_show', {'id': tag.id }) }}">{{ tag.name }}</a>{{ loop|last ? "" : ", " }}
                         {% endfor %}
                     {% endif %}
                 </small>
